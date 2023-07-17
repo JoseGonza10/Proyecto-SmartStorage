@@ -184,5 +184,505 @@ ORDER BY cols.table_name, cols.position;
 
 
 SELECT * FROM EMPLEADOS;
+---------------------------------------------------------------------------------
+------------------------------SP CRUD------------------------------
+
+-------------------TABLA PROVEEDORES-------------------
+
+------Procedimiento Almacenado para Insertar un Proveedor:------
+
+CREATE OR REPLACE PROCEDURE InsertarProveedor(
+    p_nombre_proveedor IN PROVEEDORES.NOMBRE_PROVEEDOR%TYPE,
+    p_fecha_contrato IN PROVEEDORES.FECHA_CONTRATO%TYPE,
+    p_correo_proveedor IN PROVEEDORES.CORREO_PROVEEDOR%TYPE,
+    p_telefono_proveedor IN PROVEEDORES.TELEFONO_PROVEEDOR%TYPE,
+    p_id_proveedor IN PROVEEDORES.ID_PROVEEDOR%TYPE
+)
+AS
+BEGIN
+    INSERT INTO PROVEEDORES(NOMBRE_PROVEEDOR, FECHA_CONTRATO, CORREO_PROVEEDOR, TELEFONO_PROVEEDOR, ID_PROVEEDOR)
+    VALUES(p_nombre_proveedor, p_fecha_contrato, p_correo_proveedor, p_telefono_proveedor, p_id_proveedor);
+    COMMIT;
+END;
+
+------Procedimiento Almacenado para Actualizar un Proveedor:------
+
+CREATE OR REPLACE PROCEDURE ActualizarProveedor(
+    p_id_proveedor IN PROVEEDORES.ID_PROVEEDOR%TYPE,
+    p_nuevo_nombre_proveedor IN PROVEEDORES.NOMBRE_PROVEEDOR%TYPE,
+    p_nueva_fecha_contrato IN PROVEEDORES.FECHA_CONTRATO%TYPE,
+    p_nuevo_correo_proveedor IN PROVEEDORES.CORREO_PROVEEDOR%TYPE,
+    p_nuevo_telefono_proveedor IN PROVEEDORES.TELEFONO_PROVEEDOR%TYPE
+)
+AS
+BEGIN
+    UPDATE PROVEEDORES
+    SET NOMBRE_PROVEEDOR = p_nuevo_nombre_proveedor,
+        FECHA_CONTRATO = p_nueva_fecha_contrato,
+        CORREO_PROVEEDOR = p_nuevo_correo_proveedor,
+        TELEFONO_PROVEEDOR = p_nuevo_telefono_proveedor
+    WHERE ID_PROVEEDOR = p_id_proveedor;
+    COMMIT;
+END;
+
+
+------Función para Obtener Información de un Proveedor:------
+
+CREATE OR REPLACE FUNCTION ObtenerProveedor(p_id_proveedor IN PROVEEDORES.ID_PROVEEDOR%TYPE)
+RETURN PROVEEDORES%ROWTYPE
+AS
+    v_proveedor PROVEEDORES%ROWTYPE;
+BEGIN
+    SELECT *
+    INTO v_proveedor
+    FROM PROVEEDORES
+    WHERE ID_PROVEEDOR = p_id_proveedor;
+    RETURN v_proveedor;
+END;
+
+
+------Cursor para Obtener Todos los Proveedores:------
+
+CREATE OR REPLACE FUNCTION ObtenerTodosProveedores
+RETURN SYS_REFCURSOR
+AS
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN v_cursor FOR
+    SELECT *
+    FROM PROVEEDORES;
+    RETURN v_cursor;
+END;
+
+
+-------------------TABLA CLIENTES-------------------
+
+------Procedimiento Almacenado para Insertar un Cliente:.------
+
+CREATE OR REPLACE PROCEDURE InsertarCliente(
+    p_nombre_cliente IN CLIENTES.NOMBRE_CLIENTE%TYPE,
+    p_primer_apellido_cliente IN CLIENTES.PRIMER_APELLIDO_CLIENTE%TYPE,
+    p_segundo_apellido_cliente IN CLIENTES.SEGUNDO_APELLIDO_CLIENTE%TYPE,
+    p_correo_cliente IN CLIENTES.CORREO_CLIENTE%TYPE,
+    p_telefono_cliente IN CLIENTES.TELEFONO_CLIENTE%TYPE,
+    p_cedula_cliente IN CLIENTES.CEDULA_CLIENTE%TYPE
+)
+AS
+BEGIN
+    INSERT INTO CLIENTES(NOMBRE_CLIENTE, PRIMER_APELLIDO_CLIENTE, SEGUNDO_APELLIDO_CLIENTE, CORREO_CLIENTE, TELEFONO_CLIENTE, CEDULA_CLIENTE)
+    VALUES(p_nombre_cliente, p_primer_apellido_cliente, p_segundo_apellido_cliente, p_correo_cliente, p_telefono_cliente, p_cedula_cliente);
+    COMMIT;
+END;
+
+
+
+------Procedimiento Almacenado para Actualizar un Cliente:------
+
+
+CREATE OR REPLACE PROCEDURE ActualizarCliente(
+    p_cedula_cliente IN CLIENTES.CEDULA_CLIENTE%TYPE,
+    p_nuevo_nombre_cliente IN CLIENTES.NOMBRE_CLIENTE%TYPE,
+    p_nuevo_primer_apellido_cliente IN CLIENTES.PRIMER_APELLIDO_CLIENTE%TYPE,
+    p_nuevo_segundo_apellido_cliente IN CLIENTES.SEGUNDO_APELLIDO_CLIENTE%TYPE,
+    p_nuevo_correo_cliente IN CLIENTES.CORREO_CLIENTE%TYPE,
+    p_nuevo_telefono_cliente IN CLIENTES.TELEFONO_CLIENTE%TYPE
+)
+AS
+BEGIN
+    UPDATE CLIENTES
+    SET NOMBRE_CLIENTE = p_nuevo_nombre_cliente,
+        PRIMER_APELLIDO_CLIENTE = p_nuevo_primer_apellido_cliente,
+        SEGUNDO_APELLIDO_CLIENTE = p_nuevo_segundo_apellido_cliente,
+        CORREO_CLIENTE = p_nuevo_correo_cliente,
+        TELEFONO_CLIENTE = p_nuevo_telefono_cliente
+    WHERE CEDULA_CLIENTE = p_cedula_cliente;
+    COMMIT;
+END;
+
+
+------Procedimiento Almacenado para Eliminar un Cliente:------
+
+
+CREATE OR REPLACE PROCEDURE EliminarCliente(p_cedula_cliente IN CLIENTES.CEDULA_CLIENTE%TYPE)
+AS
+BEGIN
+    DELETE FROM CLIENTES
+    WHERE CEDULA_CLIENTE = p_cedula_cliente;
+    COMMIT;
+END;
+
+------Función para Obtener Información de un Cliente:------
+
+CREATE OR REPLACE FUNCTION ObtenerCliente(p_cedula_cliente IN CLIENTES.CEDULA_CLIENTE%TYPE)
+RETURN CLIENTES%ROWTYPE
+AS
+    v_cliente CLIENTES%ROWTYPE;
+BEGIN
+    SELECT *
+    INTO v_cliente
+    FROM CLIENTES
+    WHERE CEDULA_CLIENTE = p_cedula_cliente;
+
+    RETURN v_cliente;
+END;
+
+
+------Cursor para Obtener Todos los Clientes:------
+
+
+CREATE OR REPLACE FUNCTION ObtenerTodosClientes
+RETURN SYS_REFCURSOR
+AS
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN v_cursor FOR
+    SELECT *
+    FROM CLIENTES;
+
+    RETURN v_cursor;
+END;
+
+
+-------------------TABLA CATEGORIAS-------------------
+
+------Procedimiento Almacenado para Insertar una Categoría:------
+
+
+CREATE OR REPLACE PROCEDURE InsertarCategoria(
+    p_categoria IN CATEGORIAS.CATEGORIA%TYPE,
+    p_id_categoria IN CATEGORIAS.ID_CATEGORIA%TYPE
+)
+AS
+BEGIN
+    INSERT INTO CATEGORIAS(CATEGORIA, ID_CATEGORIA)
+    VALUES(p_categoria, p_id_categoria);
+    COMMIT;
+END;
+
+
+------Procedimiento Almacenado para Actualizar una Categoría:------
+
+
+CREATE OR REPLACE PROCEDURE ActualizarCategoria(
+    p_id_categoria IN CATEGORIAS.ID_CATEGORIA%TYPE,
+    p_nueva_categoria IN CATEGORIAS.CATEGORIA%TYPE
+)
+AS
+BEGIN
+    UPDATE CATEGORIAS
+    SET CATEGORIA = p_nueva_categoria
+    WHERE ID_CATEGORIA = p_id_categoria;
+    COMMIT;
+END;
+
+
+
+------Procedimiento Almacenado para Eliminar una Categoría------
+
+
+CREATE OR REPLACE PROCEDURE EliminarCategoria(p_id_categoria IN CATEGORIAS.ID_CATEGORIA%TYPE)
+AS
+BEGIN
+    DELETE FROM CATEGORIAS
+    WHERE ID_CATEGORIA = p_id_categoria;
+    COMMIT;
+END;
+
+
+------Función para Obtener Información de una Categoría:------
+
+
+CREATE OR REPLACE FUNCTION ObtenerCategoria(p_id_categoria IN CATEGORIAS.ID_CATEGORIA%TYPE)
+RETURN CATEGORIAS%ROWTYPE
+AS
+    v_categoria CATEGORIAS%ROWTYPE;
+BEGIN
+    SELECT *
+    INTO v_categoria
+    FROM CATEGORIAS
+    WHERE ID_CATEGORIA = p_id_categoria;
+
+    RETURN v_categoria;
+END;
+
+
+
+------Cursor para Obtener Todas las Categorías:------
+
+
+CREATE OR REPLACE FUNCTION ObtenerTodasCategorias
+RETURN SYS_REFCURSOR
+AS
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN v_cursor FOR
+    SELECT *
+    FROM CATEGORIAS;
+
+    RETURN v_cursor;
+END;
+
+
+
+-------------------TABLA PRODUCTOS-------------------
+
+------Procedimiento Almacenado para Insertar un Producto:------
+
+CREATE OR REPLACE PROCEDURE InsertarProducto(
+    p_nombre_producto IN PRODUCTOS.NOMBRE_PRODUCTO%TYPE,
+    p_precio IN PRODUCTOS.PRECIO%TYPE,
+    p_cantidad IN PRODUCTOS.CANTIDAD%TYPE,
+    p_id_categoria IN PRODUCTOS.ID_CATEGORIA%TYPE,
+    p_id_proveedor IN PRODUCTOS.ID_PROVEEDOR%TYPE,
+    p_id_producto IN PRODUCTOS.ID_PRODUCTO%TYPE
+)
+AS
+BEGIN
+    INSERT INTO PRODUCTOS(NOMBRE_PRODUCTO, PRECIO, CANTIDAD, ID_CATEGORIA, ID_PROVEEDOR, ID_PRODUCTO)
+    VALUES(p_nombre_producto, p_precio, p_cantidad, p_id_categoria, p_id_proveedor, p_id_producto);
+    COMMIT;
+END;
+
+
+------Procedimiento Almacenado para Actualizar un Producto:------
+
+
+CREATE OR REPLACE PROCEDURE ActualizarProducto(
+    p_id_producto IN PRODUCTOS.ID_PRODUCTO%TYPE,
+    p_nuevo_nombre_producto IN PRODUCTOS.NOMBRE_PRODUCTO%TYPE,
+    p_nuevo_precio IN PRODUCTOS.PRECIO%TYPE,
+    p_nueva_cantidad IN PRODUCTOS.CANTIDAD%TYPE,
+    p_nuevo_id_categoria IN PRODUCTOS.ID_CATEGORIA%TYPE,
+    p_nuevo_id_proveedor IN PRODUCTOS.ID_PROVEEDOR%TYPE
+)
+AS
+BEGIN
+    UPDATE PRODUCTOS
+    SET NOMBRE_PRODUCTO = p_nuevo_nombre_producto,
+        PRECIO = p_nuevo_precio,
+        CANTIDAD = p_nueva_cantidad,
+        ID_CATEGORIA = p_nuevo_id_categoria,
+        ID_PROVEEDOR = p_nuevo_id_proveedor
+    WHERE ID_PRODUCTO = p_id_producto;
+    COMMIT;
+END;
+
+
+------Procedimiento Almacenado para Eliminar un Producto:------
+
+
+CREATE OR REPLACE PROCEDURE EliminarProducto(p_id_producto IN PRODUCTOS.ID_PRODUCTO%TYPE)
+AS
+BEGIN
+    DELETE FROM PRODUCTOS
+    WHERE ID_PRODUCTO = p_id_producto;
+    COMMIT;
+END;
+
+
+
+------Función para Obtener Información de un Producto:------
+
+
+CREATE OR REPLACE FUNCTION ObtenerProducto(p_id_producto IN PRODUCTOS.ID_PRODUCTO%TYPE)
+RETURN PRODUCTOS%ROWTYPE
+AS
+    v_producto PRODUCTOS%ROWTYPE;
+BEGIN
+    SELECT *
+    INTO v_producto
+    FROM PRODUCTOS
+    WHERE ID_PRODUCTO = p_id_producto;
+
+    RETURN v_producto;
+END;
+
+
+------Cursor para Obtener Todos los Productos:------
+
+
+CREATE OR REPLACE FUNCTION ObtenerTodosProductos
+RETURN SYS_REFCURSOR
+AS
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN v_cursor FOR
+    SELECT *
+    FROM PRODUCTOS;
+
+    RETURN v_cursor;
+END;
+
+-------------------TABLA EMPLEADOS-------------------
+
+
+
+------Procedimiento Almacenado para Insertar un Empleado:------
+
+
+CREATE OR REPLACE PROCEDURE InsertarEmpleado(
+    p_nombre_empleado IN EMPLEADOS.NOMBRE_EMPLEADO%TYPE,
+    p_primer_apellido_empleado IN EMPLEADOS.PRIMER_APELLIDO_EMPLEADO%TYPE,
+    p_segundo_apellido_empleado IN EMPLEADOS.SEGUNDO_APELLIDO_EMPLEADO%TYPE,
+    p_fecha_contratacion IN EMPLEADOS.FECHA_CONTRATACION%TYPE,
+    p_correo_empleado IN EMPLEADOS.CORREO_EMPLEADO%TYPE,
+    p_id_empleado IN EMPLEADOS.ID_EMPLEADO%TYPE,
+    p_id_posicion IN EMPLEADOS.ID_POSICION%TYPE
+)
+AS
+BEGIN
+    INSERT INTO EMPLEADOS(NOMBRE_EMPLEADO, PRIMER_APELLIDO_EMPLEADO, SEGUNDO_APELLIDO_EMPLEADO, FECHA_CONTRATACION, CORREO_EMPLEADO, ID_EMPLEADO, ID_POSICION)
+    VALUES(p_nombre_empleado, p_primer_apellido_empleado, p_segundo_apellido_empleado, p_fecha_contratacion, p_correo_empleado, p_id_empleado, p_id_posicion);
+    COMMIT;
+END;
+
+
+------Procedimiento Almacenado para Actualizar un Empleado:------
+
+
+CREATE OR REPLACE PROCEDURE ActualizarEmpleado(
+    p_id_empleado IN EMPLEADOS.ID_EMPLEADO%TYPE,
+    p_nuevo_nombre_empleado IN EMPLEADOS.NOMBRE_EMPLEADO%TYPE,
+    p_nuevo_primer_apellido_empleado IN EMPLEADOS.PRIMER_APELLIDO_EMPLEADO%TYPE,
+    p_nuevo_segundo_apellido_empleado IN EMPLEADOS.SEGUNDO_APELLIDO_EMPLEADO%TYPE,
+    p_nueva_fecha_contratacion IN EMPLEADOS.FECHA_CONTRATACION%TYPE,
+    p_nuevo_correo_empleado IN EMPLEADOS.CORREO_EMPLEADO%TYPE,
+    p_nuevo_id_posicion IN EMPLEADOS.ID_POSICION%TYPE
+)
+AS
+BEGIN
+    UPDATE EMPLEADOS
+    SET NOMBRE_EMPLEADO = p_nuevo_nombre_empleado,
+        PRIMER_APELLIDO_EMPLEADO = p_nuevo_primer_apellido_empleado,
+        SEGUNDO_APELLIDO_EMPLEADO = p_nuevo_segundo_apellido_empleado,
+        FECHA_CONTRATACION = p_nueva_fecha_contratacion,
+        CORREO_EMPLEADO = p_nuevo_correo_empleado,
+        ID_POSICION = p_nuevo_id_posicion
+    WHERE ID_EMPLEADO = p_id_empleado;
+    COMMIT;
+END;
+
+
+------Procedimiento Almacenado para Eliminar un Empleado:------
+
+
+CREATE OR REPLACE PROCEDURE EliminarEmpleado(p_id_empleado IN EMPLEADOS.ID_EMPLEADO%TYPE)
+AS
+BEGIN
+    DELETE FROM EMPLEADOS
+    WHERE ID_EMPLEADO = p_id_empleado;
+    COMMIT;
+END;
+
+
+------Función para Obtener Información de un Empleado:------
+
+CREATE OR REPLACE FUNCTION ObtenerEmpleado(p_id_empleado IN EMPLEADOS.ID_EMPLEADO%TYPE)
+RETURN EMPLEADOS%ROWTYPE
+AS
+    v_empleado EMPLEADOS%ROWTYPE;
+BEGIN
+    SELECT *
+    INTO v_empleado
+    FROM EMPLEADOS
+    WHERE ID_EMPLEADO = p_id_empleado;
+
+    RETURN v_empleado;
+END;
+
+------Cursor para Obtener Todos los Empleados:------
+
+
+CREATE OR REPLACE FUNCTION ObtenerTodosEmpleados
+RETURN SYS_REFCURSOR
+AS
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN v_cursor FOR
+    SELECT *
+    FROM EMPLEADOS;
+
+    RETURN v_cursor;
+END;
+
+
+-------------------TABLA POSICION-------------------
+
+
+
+------Procedimiento Almacenado para Insertar una Posición:------
+
+
+CREATE OR REPLACE PROCEDURE InsertarPosicion(
+    p_posicion IN POSICION.POSICION%TYPE,
+    p_id_posicion IN POSICION.ID_POSICION%TYPE
+)
+AS
+BEGIN
+    INSERT INTO POSICION(POSICION, ID_POSICION)
+    VALUES(p_posicion, p_id_posicion);
+    COMMIT;
+END;
+
+
+------Procedimiento Almacenado para Actualizar una Posición:------
+
+
+CREATE OR REPLACE PROCEDURE ActualizarPosicion(
+    p_id_posicion IN POSICION.ID_POSICION%TYPE,
+    p_nueva_posicion IN POSICION.POSICION%TYPE
+)
+AS
+BEGIN
+    UPDATE POSICION
+    SET POSICION = p_nueva_posicion
+    WHERE ID_POSICION = p_id_posicion;
+    COMMIT;
+END;
+
+
+------Procedimiento Almacenado para Eliminar una Posición:------
+
+
+CREATE OR REPLACE PROCEDURE EliminarPosicion(p_id_posicion IN POSICION.ID_POSICION%TYPE)
+AS
+BEGIN
+    DELETE FROM POSICION
+    WHERE ID_POSICION = p_id_posicion;
+    COMMIT;
+END;
+
+
+------Función para Obtener Información de una Posición:------
+
+
+CREATE OR REPLACE FUNCTION ObtenerPosicion(p_id_posicion IN POSICION.ID_POSICION%TYPE)
+RETURN POSICION%ROWTYPE
+AS
+    v_posicion POSICION%ROWTYPE;
+BEGIN
+    SELECT *
+    INTO v_posicion
+    FROM POSICION
+    WHERE ID_POSICION = p_id_posicion;
+
+    RETURN v_posicion;
+END;
+
+
+------Cursor para Obtener Todas las Posiciones:------
+
+
+CREATE OR REPLACE FUNCTION ObtenerTodasPosiciones
+RETURN SYS_REFCURSOR
+AS
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN v_cursor FOR
+    SELECT *
+    FROM POSICION;
+
+    RETURN v_cursor;
+END;
 
 
